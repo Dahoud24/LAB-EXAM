@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MASTER DETAIL LAB</title>
+
+
+<style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100vh;
+      margin: 0;
+      width: 100vw;
+    }
+ main {
+      display: flex;
+      flex-direction: row;
+      padding: 15px;
+      max-height: 90vh;
+      flex-grow: 10;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      background-color: gainsboro;
+    }
+
+    nav {
+      background-color: blueviolet;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+    }
+
+    .back-link {
+      color: white;
+      text-decoration: none;
+      font-size: 0.9rem;
+      opacity: 0.85;
+      white-space: nowrap;
+    }
+
+    .back-link:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+ 
+    #master {
+      flex-grow: 1;
+      background-color: white;
+      height: 100%;
+      border-right: 1px solid black;
+      max-height: 100%;
+      overflow-y: scroll;
+    }
+
+    #detail {
+      flex-grow: 6;
+      height: 100%;
+      text-align: center;
+      padding: 20px;
+      background-color: white;
+
+    }
+
+    li{
+      list-style-type: none;
+      border: 1px solid black;
+      padding: 10px;
+    }
+    li:hover{
+      background-color: rgb(148, 148, 148);
+      cursor: pointer;
+    }
+
+    nav>h1 {
+      flex: 1;
+      text-align: center;
+      color: white;
+      margin: 0;
+      padding: 10px 0;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+
+    </style>
+
+    </head>
+
+
+
+<body>
+
+  <nav>
+    <h1>MASTER DETAIL LAB</h1>
+  </nav>
+
+<main>
+<section id="master">
+    <ul id ="list">  
+    </ul>
+</section>
+<section id="detail">
+    <p>Selected item will be displayed here.</p>
+</section>
+
+</main>
+
+</body>
+<script>
+  let game_data = [];
+
+
+
+
+  function renderList(data){
+      let html = '';
+      let result = document.querySelector('#list');
+      for (let rec of data){
+         html += `<li onclick="select('${rec.title}')">
+  <img src="${rec.thumbnail}" style="width:20px; height:20px;">
+  <a>${rec.title}</a>
+</li>`;
+  }
+
+  result.innerHTML = html;
+  }
+
+async function fetchdata() {
+  let response = await fetch('https://weblabs.web.app/api/games/all.json');
+  let data = await response.json();
+   game_data = data;
+    renderList(game_data);
+
+}
+
+function findRecord(title){
+  for(let rec of game_data){
+    if (rec.title == title)
+      return rec
+  }
+  return null;
+}
+function select(title){
+  let result = document.querySelector('#detail');
+  let data = findRecord(title);
+  let html = `
+  <img src="${data.thumbnail}" width="200px" height="200px"></img>
+  <h1>${data.title}</h1>
+  <p> ${data.short_description}</p>
+
+  <table>
+            <tr><th>Genre</th><td>${data.genre}</td></tr>
+            <tr><th>Platform</th><td>${data.platform}</td></tr>
+            <tr><th>Publisher</th><td>${data.publisher}</td></tr>
+            <tr><th>Developer</th><td>${data.developer}</td></tr>
+            <tr><th>Release Date</th><td>${data.release_date}</td></tr>
+          </table>
+  `;
+  
+  result.innerHTML = html;
+}
+
+
+fetchdata();
+</script>
+
+</html>
